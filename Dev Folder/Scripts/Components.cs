@@ -4,12 +4,10 @@ using System.Collections;
 public class Components : MonoBehaviour
 {
     [Header("Local Components")]
-    [SerializeField]
     public GameManager GameManager;
-    [SerializeField]
     public InputController InputController;
-    [SerializeField]
     public MenuController MenuController;
+    public ColorController ColorController;
 
     [Header("Global Components")]
     public PlayerController PlayerController;
