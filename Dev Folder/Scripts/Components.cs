@@ -8,6 +8,8 @@ public class Components : MonoBehaviour
     public InputController InputController;
     public MenuController MenuController;
     public ColorController ColorController;
+    public SpawnController SpawnController;
+    public TargetController TargetController;
 
     [Header("Global Components")]
     public PlayerController PlayerController;

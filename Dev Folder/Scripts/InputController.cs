@@ -33,7 +33,7 @@ public class InputController : MonoBehaviour
         }
     }
 
-    void UseKeyOnce(int key)
+    public void UseKeyOnce(int key)
     {
         m_KeyStates[key] = false;
     }
