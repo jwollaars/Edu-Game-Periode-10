@@ -7,7 +7,10 @@ public class ColorController : MonoBehaviour
     [SerializeField]
     private GameObject m_PlayerObject;
     private Color m_PlayerColor;
-    public Color GetPlayerColor;
+    public Color GetPlayerColor
+    {
+        get { return m_PlayerColor; }
+    }
 
     [SerializeField]
     private List<GameObject> m_EnemyObjects = new List<GameObject>();
@@ -16,14 +19,15 @@ public class ColorController : MonoBehaviour
         get { return m_EnemyObjects; }
         set { m_EnemyObjects = value; }
     }
+    [SerializeField]
     private List<Color> m_EnemyColors = new List<Color>();
     public List<Color> GetEnemyColors
     {
         get { return m_EnemyColors; }
     }
 
-    [SerializeField]
-    private Color m_TargetEnemyColor;
+    //[SerializeField]
+    //private Color m_TargetEnemyColor;
 
     private Color m_CorrectColor;
 
@@ -43,12 +47,12 @@ public class ColorController : MonoBehaviour
 
     void Update()
     {
-        ContrastCheck(m_TargetColorContrast, m_PlayerColor, ref m_TargetEnemyColor);
+        //ContrastCheck(m_TargetColorContrast, m_PlayerColor, m_TargetEnemyColor);
     }
 
     private void Setup()
     {
-        m_TargetEnemyColor = m_EnemyObjects[0].GetComponent<SpriteRenderer>().color;
+        //m_TargetEnemyColor = m_EnemyObjects[0].GetComponent<SpriteRenderer>().color;
         m_PlayerColor = m_PlayerObject.GetComponent<SpriteRenderer>().color;
     }
 
@@ -148,7 +152,12 @@ public class ColorController : MonoBehaviour
 
     public void SetTargetEnemyColor(GameObject go)
     {
-        m_TargetEnemyColor = go.GetComponent<SpriteRenderer>().color;
+        //m_TargetEnemyColor = go.GetComponent<SpriteRenderer>().color;
+    }
+
+    public void Check()
+    {
+
     }
 
     public void AddEnemy(GameObject enemy)
