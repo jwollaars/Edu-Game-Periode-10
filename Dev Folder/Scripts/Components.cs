@@ -10,6 +10,8 @@ public class Components : MonoBehaviour
     public ColorController ColorController;
     public SpawnController SpawnController;
     public TargetController TargetController;
+    public HUDController HUDController;
+    public GarbageDisposal GarbageDisposal;
 
     [Header("Global Components")]
     public PlayerController PlayerController;

@@ -6,6 +6,8 @@ public class SpawnController : MonoBehaviour
 {
     private Components m_Components;
 
+    private bool m_Play = false;
+
     [Header("Objects info")]
     [SerializeField]
     private List<GameObject> m_Prefabs;
@@ -31,14 +33,26 @@ public class SpawnController : MonoBehaviour
 
     void Update()
     {
-        if (TimeController())
+        if (m_Play)
         {
-            SpawnObstacle(0, Random.Range(0, m_SpawnPositions.Count));
+            if (TimeController())
+            {
+                SpawnObstacle(0, Random.Range(0, m_SpawnPositions.Count - 1));
+            }
         }
     }
 
     private void SpawnObstacle(int prefabID, int spawnPosition)
     {
+        for (int i = 0; i < m_Components.ColorController.GetEnemyObjects.Count; i++)
+        {
+            if(m_SpawnPositions[spawnPosition] == m_Components.ColorController.GetEnemyObjects[i].transform.position)
+            {
+                spawnPosition += 1;
+                i = 0;
+            }
+        }
+
         GameObject clone = Instantiate(m_Prefabs[prefabID], m_SpawnPositions[spawnPosition], Quaternion.identity) as GameObject;
         //clone.transform.SetParent(m_Components.GameManager.Game.transform);
 
@@ -55,6 +69,8 @@ public class SpawnController : MonoBehaviour
         }
 
         m_Components.ColorController.AddEnemy(clone);
+
+        m_Components.GarbageDisposal.AddGarbage(clone, 5);
     }
 
     private bool TimeController()
@@ -72,5 +88,10 @@ public class SpawnController : MonoBehaviour
     private void Setup()
     {
         m_SpawnTimer = m_Cooldown;
+    }
+
+    public void Play(bool play)
+    {
+        m_Play = play;
     }
 }

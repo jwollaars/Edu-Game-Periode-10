@@ -23,7 +23,7 @@ public class TargetController : MonoBehaviour
 
     void Update()
     {
-        if (m_Target > m_Components.ColorController.GetEnemyObjects.Count)
+        if (m_Target > m_Components.ColorController.GetEnemyObjects.Count - 1)
         {
             m_Target = 0;
         }
@@ -34,8 +34,15 @@ public class TargetController : MonoBehaviour
 
         if (m_Components.ColorController.GetEnemyObjects.Count != 0 && (m_Target <= m_Components.ColorController.GetEnemyObjects.Count && m_Target >= 0))
         {
-            m_Highlight.transform.position = m_Components.ColorController.GetEnemyObjects[m_Target].transform.position;
-            m_Highlight.SetActive(true);
+            if (m_Components.ColorController.GetEnemyObjects[m_Target] != null)
+            {
+                m_Highlight.transform.position = m_Components.ColorController.GetEnemyObjects[m_Target].transform.position;
+                m_Highlight.SetActive(true);
+            }
+            else
+            {
+                m_Highlight.SetActive(false);
+            }
         }
         else
         {
@@ -51,6 +58,6 @@ public class TargetController : MonoBehaviour
 
     public void PreviousTarget()
     {
-        m_Target += 1;
+        m_Target -= 1;
     }
 }
