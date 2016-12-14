@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.R))
+        if(Input.GetKeyDown(KeyCode.P))
         {
             GameObject game = Instantiate(m_Game, Vector3.zero, Quaternion.identity) as GameObject;
             GameObject managers = Instantiate(m_Managers, Vector3.zero, Quaternion.identity) as GameObject;
