@@ -22,6 +22,7 @@ public class MenuController : MonoBehaviour
 
         m_Components.GameManager.Game.SetActive(true);
         m_Components.GameManager.Progress = new ProgressInfo();
+
         m_Components.SpawnController.Play(true);
     }
 

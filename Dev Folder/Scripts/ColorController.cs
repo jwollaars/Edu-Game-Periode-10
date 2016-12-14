@@ -7,9 +7,10 @@ public class ColorController : MonoBehaviour
     [SerializeField]
     private GameObject m_PlayerObject;
     private Color m_PlayerColor;
-    public Color GetPlayerColor
+    public Color PlayerColor
     {
         get { return m_PlayerColor; }
+        set { m_PlayerColor = value; }
     }
 
     [SerializeField]
@@ -26,8 +27,18 @@ public class ColorController : MonoBehaviour
         get { return m_EnemyColors; }
     }
 
-    //[SerializeField]
-    //private Color m_TargetEnemyColor;
+    [SerializeField]
+    private List<GameObject> m_BackgroundLanes = new List<GameObject>();
+    public List<GameObject> GetBackgroundLanes
+    {
+        get { return m_BackgroundLanes; }
+    }
+    [SerializeField]
+    private List<Color> m_BackgroundLaneColors = new List<Color>();
+    public List<Color> GetBackgroundLaneColors
+    {
+        get { return m_BackgroundLaneColors; }
+    }
 
     private Color m_CorrectColor;
 
@@ -47,13 +58,17 @@ public class ColorController : MonoBehaviour
 
     void Update()
     {
-        //ContrastCheck(m_TargetColorContrast, m_PlayerColor, m_TargetEnemyColor);
     }
 
     private void Setup()
     {
-        //m_TargetEnemyColor = m_EnemyObjects[0].GetComponent<SpriteRenderer>().color;
         m_PlayerColor = m_PlayerObject.GetComponent<SpriteRenderer>().color;
+
+        for (int i = 0; i < m_BackgroundLanes.Count; i++)
+        {
+            m_BackgroundLanes[i].GetComponent<SpriteRenderer>().color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+            m_BackgroundLaneColors.Add(m_BackgroundLanes[i].GetComponent<SpriteRenderer>().color);
+        }
     }
 
     public Color ContrastCorrect(string contrastType)
