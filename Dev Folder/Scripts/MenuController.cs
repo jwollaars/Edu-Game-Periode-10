@@ -3,16 +3,16 @@ using System.Collections;
 
 public class MenuController : MonoBehaviour
 {
+    private Components m_Components;
+
     [SerializeField]
     private GameObject m_MainMenu;
     [SerializeField]
     private GameObject m_InGameMenu;
 
-    private GameManager m_GameManager;
-
     void Start()
     {
-        m_GameManager = GameObject.Find("Managements").GetComponent<GameManager>();
+        m_Components = GetComponent<Components>();
     }
 
     public void StartGame()
@@ -20,8 +20,9 @@ public class MenuController : MonoBehaviour
         MenuActive(m_MainMenu);
         MenuActive(m_InGameMenu);
 
-        m_GameManager.Game.SetActive(true);
-        m_GameManager.Progress = new ProgressInfo();
+        m_Components.GameManager.Game.SetActive(true);
+        m_Components.GameManager.Progress = new ProgressInfo();
+        m_Components.SpawnController.Play(true);
     }
 
     public void PauseGame()

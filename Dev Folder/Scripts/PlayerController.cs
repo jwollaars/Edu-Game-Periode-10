@@ -46,7 +46,23 @@ public class PlayerController : MonoBehaviour
 
         if (m_Components.InputController.GetKeyStates[6])
         {
-            m_Components.ColorController.ContrastCheck(m_Components.ColorController.GetTargetColorContrast, m_Components.ColorController.GetPlayerColor, m_Components.ColorController.GetEnemyColors[m_Components.TargetController.GetTarget]);
+            if(m_Components.ColorController.ContrastCheck(m_Components.ColorController.GetTargetColorContrast, m_Components.ColorController.GetPlayerColor, m_Components.ColorController.GetEnemyColors[m_Components.TargetController.GetTarget]))
+            {
+                Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
+                m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
+                m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
+
+                m_Components.GameManager.Progress.AddScore();
+            }
+            else
+            {
+                Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
+                m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
+                m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
+
+                m_Components.GameManager.Progress.RemoveScore();
+            }
+            m_Components.InputController.UseKeyOnce(6);
         }
     }
 }
