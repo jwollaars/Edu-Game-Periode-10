@@ -6,6 +6,11 @@ public class ColorController : MonoBehaviour
 {
     [SerializeField]
     private GameObject m_PlayerObject;
+    public GameObject PlayerObject
+    {
+        get { return m_PlayerObject; }
+        set { m_PlayerObject = value; }
+    }
     private Color m_PlayerColor;
     public Color PlayerColor
     {
@@ -58,17 +63,18 @@ public class ColorController : MonoBehaviour
 
     void Update()
     {
+        m_PlayerColor = m_PlayerObject.GetComponent<SpriteRenderer>().color;
     }
 
     private void Setup()
     {
         m_PlayerColor = m_PlayerObject.GetComponent<SpriteRenderer>().color;
-
-        for (int i = 0; i < m_BackgroundLanes.Count; i++)
-        {
-            m_BackgroundLanes[i].GetComponent<SpriteRenderer>().color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-            m_BackgroundLaneColors.Add(m_BackgroundLanes[i].GetComponent<SpriteRenderer>().color);
-        }
+        
+        //for (int i = 0; i < m_BackgroundLanes.Count; i++)
+        //{
+        //    m_BackgroundLanes[i].GetComponent<SpriteRenderer>().color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+        //    m_BackgroundLaneColors.Add(m_BackgroundLanes[i].GetComponent<SpriteRenderer>().color);
+        //}
     }
 
     public Color ContrastCorrect(string contrastType)

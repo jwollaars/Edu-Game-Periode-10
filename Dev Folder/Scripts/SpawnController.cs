@@ -70,7 +70,7 @@ public class SpawnController : MonoBehaviour
 
         m_Components.ColorController.AddEnemy(clone);
 
-        m_Components.GarbageDisposal.AddGarbage(clone, 5);
+        m_Components.GarbageDisposal.AddGarbage(clone, 10);
     }
 
     private bool TimeController()

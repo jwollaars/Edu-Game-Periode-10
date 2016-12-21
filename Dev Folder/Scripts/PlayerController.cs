@@ -7,7 +7,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField]
-    private int m_Speed = 1;
+    private int m_HorizontalSpeed = 1;
+    [SerializeField]
+    private int m_VerticalSpeed = 1;
 
     [Header("Components")]
     [SerializeField]
@@ -23,20 +25,20 @@ public class PlayerController : MonoBehaviour
     {
         if (m_Components.InputController.GetKeyStates[0])
         {
-            transform.position += new Vector3(0, 1 + m_Speed) * Time.deltaTime;
+            transform.position += new Vector3(0, 1 + m_VerticalSpeed) * Time.deltaTime;
         }
         else if (m_Components.InputController.GetKeyStates[1])
         {
-            transform.position -= new Vector3(0, 1 + m_Speed) * Time.deltaTime;
+            transform.position -= new Vector3(0, 1 + m_VerticalSpeed) * Time.deltaTime;
         }
 
         if (m_Components.InputController.GetKeyStates[2])
         {
-            transform.position -= new Vector3(1 + m_Speed, 0) * Time.deltaTime;
+            transform.position -= new Vector3(1 + m_HorizontalSpeed, 0) * Time.deltaTime;
         }
         else if (m_Components.InputController.GetKeyStates[3])
         {
-            transform.position += new Vector3(1 + m_Speed, 0) * Time.deltaTime;
+            transform.position += new Vector3(1 + m_HorizontalSpeed, 0) * Time.deltaTime;
         }
 
         if (m_Components.InputController.GetKeyStates[4])
@@ -52,21 +54,34 @@ public class PlayerController : MonoBehaviour
 
         if (m_Components.InputController.GetKeyStates[6])
         {
-            if (m_Components.ColorController.ContrastCheck(m_Components.ColorController.GetTargetColorContrast, m_Components.ColorController.PlayerColor, m_Components.ColorController.GetEnemyColors[m_Components.TargetController.GetTarget]))
+            if (!m_Components.ColorController.ContrastCheck(m_Components.ColorController.GetTargetColorContrast, m_Components.ColorController.PlayerColor, m_Components.ColorController.GetEnemyColors[m_Components.TargetController.GetTarget]))
             {
-                Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
-                m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
-                m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
+                if (transform.position.y < m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y + 0.2f &&
+                    transform.position.y > m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y - 0.2f)
+                {
+                    StartCoroutine(DashAttack(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget], 0.3f));
 
-                m_Components.GameManager.Progress.AddScore();
+
+                    //Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
+                    //m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
+                    //m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
+
+                    m_Components.GameManager.Progress.AddScore();
+                }
             }
             else
             {
-                Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
-                m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
-                m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
+                if (transform.position.y < m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y + 0.2f &&
+                    transform.position.y > m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y - 0.2f)
+                {
+                    StartCoroutine(DashAttack(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget], 0.3f));
 
-                m_Components.GameManager.Progress.RemoveScore();
+                    //Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
+                    //m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
+                    //m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
+
+                    m_Components.GameManager.Progress.RemoveScore();
+                }
             }
             m_Components.InputController.UseKeyOnce(6);
         }
@@ -74,18 +89,41 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionStay2D(Collision2D collider)
     {
-        Debug.Log("Hit");
         if (m_Components.InputController.GetKeyStates[7] && collider.gameObject.tag == "Background")
         {
             Color tempCol = collider.gameObject.GetComponent<SpriteRenderer>().color;
-            if (m_Components.ColorController.ContrastCheck(m_Components.ColorController.GetTargetColorContrast, m_Components.ColorController.PlayerColor, tempCol))
-            {
-                Color col = new Color((m_Components.ColorController.PlayerColor.r + tempCol.r) / 2, (m_Components.ColorController.PlayerColor.g + tempCol.g) / 2, (m_Components.ColorController.PlayerColor.b + tempCol.b) / 2, 1);
-                Debug.Log(col);
-                m_SpriteRenderer.color = col;
 
-                m_Components.GameManager.Progress.AddScore();
-            }
+            Color col = new Color((m_Components.ColorController.PlayerColor.r + tempCol.r) / 2, (m_Components.ColorController.PlayerColor.g + tempCol.g) / 2, (m_Components.ColorController.PlayerColor.b + tempCol.b) / 2, 1);
+            m_SpriteRenderer.color = col;
+
+            m_Components.GameManager.Progress.AddScore();
         }
+    }
+
+    IEnumerator DashAttack(GameObject target, float time)
+    {
+        float elapsedTime = 0;
+        Vector3 startingPos = transform.position;
+
+        while (elapsedTime < time)
+        {
+            transform.position = Vector3.Lerp(startingPos, target.transform.position, (elapsedTime / time));
+
+            float distance = Vector2.Distance(transform.position, target.transform.position);
+            elapsedTime += Time.deltaTime;
+
+            if (distance < 0.1f)
+            {
+                Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
+                m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
+                m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
+
+                yield break;
+            }
+
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0);
     }
 }

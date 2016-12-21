@@ -16,6 +16,8 @@ public class TargetController : MonoBehaviour
         set { m_Target = value; }
     }
 
+    private float m_ClosestDistance;
+
     void Start()
     {
         m_Components = GetComponent<Components>();
@@ -23,13 +25,18 @@ public class TargetController : MonoBehaviour
 
     void Update()
     {
-        if (m_Target > m_Components.ColorController.GetEnemyObjects.Count - 1)
+        m_Target = 0;
+        m_ClosestDistance = 500;
+        
+        for (int i = 0; i < m_Components.ColorController.GetEnemyObjects.Count; i++)
         {
-            m_Target = 0;
-        }
-        else if (m_Target < 0)
-        {
-            m_Target = m_Components.ColorController.GetEnemyObjects.Count - 1;
+            float distance = Vector2.Distance(m_Components.ColorController.PlayerObject.transform.position, m_Components.ColorController.GetEnemyObjects[i].transform.position);
+
+            if(distance <= m_ClosestDistance)
+            {
+                m_ClosestDistance = distance;
+                m_Target = i;
+            }
         }
 
         if (m_Components.ColorController.GetEnemyObjects.Count != 0 && (m_Target <= m_Components.ColorController.GetEnemyObjects.Count && m_Target >= 0))
