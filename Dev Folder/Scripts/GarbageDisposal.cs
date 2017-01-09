@@ -26,6 +26,7 @@ public class GarbageDisposal : MonoBehaviour
 
                 if (go != null)
                 {
+                    m_Components.GameManager.Progress.RemoveScore();
                     m_Components.ColorController.GetEnemyColors.Remove(go.GetComponent<SpriteRenderer>().color);
                     m_Components.ColorController.GetEnemyObjects.Remove(go);
                 }

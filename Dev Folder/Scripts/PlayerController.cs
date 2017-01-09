@@ -60,8 +60,7 @@ public class PlayerController : MonoBehaviour
                     transform.position.y > m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y - 0.2f)
                 {
                     StartCoroutine(DashAttack(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget], 0.3f));
-
-
+                    
                     //Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
                     //m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
                     //m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
@@ -112,8 +111,9 @@ public class PlayerController : MonoBehaviour
             float distance = Vector2.Distance(transform.position, target.transform.position);
             elapsedTime += Time.deltaTime;
 
-            if (distance < 0.1f)
+            if (elapsedTime >= time)
             {
+                Debug.Log("Kill");
                 Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
                 m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
                 m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
