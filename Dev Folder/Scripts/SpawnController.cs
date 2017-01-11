@@ -42,7 +42,7 @@ public class SpawnController : MonoBehaviour
         }
     }
 
-    private void SpawnObstacle(int prefabID, int spawnPosition)
+    public void SpawnObstacle(int prefabID, int spawnPosition, bool tutorial)
     {
         for (int i = 0; i < m_Components.ColorController.GetEnemyObjects.Count; i++)
         {
@@ -59,7 +59,38 @@ public class SpawnController : MonoBehaviour
         m_CorrectColor = m_Components.ColorController.ContrastCorrect(m_TargetContrast);
         int check = Random.Range(0, 10);
 
-        if (check >= 0 && check <= 5)
+        if ((check >= 0 && check <= 5) || tutorial)
+        {
+            clone.GetComponent<SpriteRenderer>().color = m_CorrectColor;
+        }
+        else if (!tutorial)
+        {
+            clone.GetComponent<SpriteRenderer>().color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1);
+        }
+
+        m_Components.ColorController.AddEnemy(clone);
+
+        m_Components.GarbageDisposal.AddGarbage(clone, 10);
+    }
+
+    public void SpawnObstacle(int prefabID, int spawnPosition)
+    {
+        for (int i = 0; i < m_Components.ColorController.GetEnemyObjects.Count; i++)
+        {
+            if (m_SpawnPositions[spawnPosition] == m_Components.ColorController.GetEnemyObjects[i].transform.position)
+            {
+                spawnPosition += 1;
+                i = 0;
+            }
+        }
+
+        GameObject clone = Instantiate(m_Prefabs[prefabID], m_SpawnPositions[spawnPosition], Quaternion.identity) as GameObject;
+        //clone.transform.SetParent(m_Components.GameManager.Game.transform);
+
+        m_CorrectColor = m_Components.ColorController.ContrastCorrect(m_TargetContrast);
+        int check = Random.Range(0, 10);
+
+        if ((check >= 0 && check <= 5))
         {
             clone.GetComponent<SpriteRenderer>().color = m_CorrectColor;
         }

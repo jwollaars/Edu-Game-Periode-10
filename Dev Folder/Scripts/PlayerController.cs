@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     [Header("Components")]
     [SerializeField]
     private SpriteRenderer m_SpriteRenderer;
+    [SerializeField]
+    private Animator m_Animator;
 
     void Start()
     {
@@ -26,10 +28,16 @@ public class PlayerController : MonoBehaviour
         if (m_Components.InputController.GetKeyStates[0])
         {
             transform.position += new Vector3(0, 1 + m_VerticalSpeed) * Time.deltaTime;
+            m_Animator.SetFloat("Moving", 1);
         }
         else if (m_Components.InputController.GetKeyStates[1])
         {
             transform.position -= new Vector3(0, 1 + m_VerticalSpeed) * Time.deltaTime;
+            m_Animator.SetFloat("Moving", -1);
+        }
+        else
+        {
+            m_Animator.SetFloat("Moving", 0);
         }
 
         if (m_Components.InputController.GetKeyStates[2])
@@ -56,10 +64,12 @@ public class PlayerController : MonoBehaviour
         {
             if (!m_Components.ColorController.ContrastCheck(m_Components.ColorController.GetTargetColorContrast, m_Components.ColorController.PlayerColor, m_Components.ColorController.GetEnemyColors[m_Components.TargetController.GetTarget]))
             {
-                if (transform.position.y < m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y + 0.2f &&
-                    transform.position.y > m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y - 0.2f)
+                if (transform.position.y < m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y + 0.3f &&
+                    transform.position.y > m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y - 0.3f)
                 {
                     StartCoroutine(DashAttack(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget], 0.3f));
+
+                    m_Animator.SetBool("Attack", true);
                     
                     //Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
                     //m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
@@ -70,10 +80,12 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if (transform.position.y < m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y + 0.2f &&
-                    transform.position.y > m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y - 0.2f)
+                if (transform.position.y < m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y + 0.3f &&
+                    transform.position.y > m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y - 0.3f)
                 {
                     StartCoroutine(DashAttack(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget], 0.3f));
+
+                    m_Animator.SetBool("Attack", true);
 
                     //Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
                     //m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
@@ -94,8 +106,11 @@ public class PlayerController : MonoBehaviour
 
             Color col = new Color((m_Components.ColorController.PlayerColor.r + tempCol.r) / 2, (m_Components.ColorController.PlayerColor.g + tempCol.g) / 2, (m_Components.ColorController.PlayerColor.b + tempCol.b) / 2, 1);
             m_SpriteRenderer.color = col;
-
-            m_Components.GameManager.Progress.AddScore();
+            m_Animator.SetBool("Tong", true);
+        }
+        else
+        {
+            m_Animator.SetBool("Tong", false);
         }
     }
 
@@ -106,17 +121,21 @@ public class PlayerController : MonoBehaviour
 
         while (elapsedTime < time)
         {
-            transform.position = Vector3.Lerp(startingPos, target.transform.position, (elapsedTime / time));
+            if (target != null)
+            {
+                transform.position = Vector3.Lerp(startingPos, target.transform.position, (elapsedTime / time));
 
             float distance = Vector2.Distance(transform.position, target.transform.position);
+            }
             elapsedTime += Time.deltaTime;
 
             if (elapsedTime >= time)
             {
-                Debug.Log("Kill");
                 Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
                 m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
                 m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
+
+                m_Animator.SetBool("Attack", false);
 
                 yield break;
             }
