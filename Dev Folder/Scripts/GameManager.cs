@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class GameManager : MonoBehaviour
@@ -48,6 +49,11 @@ public class GameManager : MonoBehaviour
 
             Destroy(m_CurrentGame);
             Destroy(m_CurrentManagers);
+        }
+
+        if(m_Progress.Mistakes >= 3)
+        {
+            SceneManager.LoadScene(0);
         }
     }
 }

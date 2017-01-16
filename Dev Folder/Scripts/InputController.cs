@@ -12,6 +12,8 @@ public class InputController : MonoBehaviour
         get { return m_KeyStates; }
     }
 
+    private bool m_Play = false;
+
     void Start()
     {
         m_KeyStates = new bool[m_Keys.Length];
@@ -19,16 +21,19 @@ public class InputController : MonoBehaviour
 
     void Update()
     {
-        for (int i = 0; i < m_Keys.Length; i++)
+        if (m_Play)
         {
-            if(Input.GetKeyDown(m_Keys[i]))
+            for (int i = 0; i < m_Keys.Length; i++)
             {
-                m_KeyStates[i] = true;
-            }
+                if (Input.GetKeyDown(m_Keys[i]))
+                {
+                    m_KeyStates[i] = true;
+                }
 
-            if(Input.GetKeyUp(m_Keys[i]))
-            {
-                m_KeyStates[i] = false;
+                if (Input.GetKeyUp(m_Keys[i]))
+                {
+                    m_KeyStates[i] = false;
+                }
             }
         }
     }
@@ -36,5 +41,10 @@ public class InputController : MonoBehaviour
     public void UseKeyOnce(int key)
     {
         m_KeyStates[key] = false;
+    }
+
+    public void Play()
+    {
+        m_Play = true;
     }
 }

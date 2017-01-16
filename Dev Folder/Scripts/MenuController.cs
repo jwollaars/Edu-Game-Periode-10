@@ -13,6 +13,7 @@ public class MenuController : MonoBehaviour
     void Start()
     {
         m_Components = GetComponent<Components>();
+        Time.timeScale = 0;
     }
 
     public void StartGame()
@@ -24,6 +25,8 @@ public class MenuController : MonoBehaviour
         m_Components.GameManager.Progress = new ProgressInfo();
 
         m_Components.SpawnController.Play(true);
+        m_Components.InputController.Play();
+        Time.timeScale = 1;
     }
 
     public void PauseGame()

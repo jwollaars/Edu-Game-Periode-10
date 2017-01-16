@@ -43,11 +43,11 @@ public class TutorialController : MonoBehaviour
 
                         if (m_TutorialScreens[i].name == "Tutorial 1")
                         {
-                            m_Components.SpawnController.SpawnObstacle(0, 0, true);
+                            m_Components.SpawnController.SpawnObstacle(0, 5, false);
                         }
                         else if (m_TutorialScreens[i].name == "Tutorial 2")
                         {
-                            m_Components.SpawnController.SpawnObstacle(0, 0, false);
+                            m_Components.SpawnController.SpawnObstacle(0, 5, true);
                         }
 
                         break;

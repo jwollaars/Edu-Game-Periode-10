@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Animator m_Animator;
 
+    private Coroutine m_AttackCoroutine;
+
     void Start()
     {
         m_Components = GameObject.Find("Managements").GetComponent<Components>();
@@ -49,51 +51,14 @@ public class PlayerController : MonoBehaviour
             transform.position += new Vector3(1 + m_HorizontalSpeed, 0) * Time.deltaTime;
         }
 
-        if (m_Components.InputController.GetKeyStates[4])
-        {
-            m_Components.TargetController.NextTarget();
-            m_Components.InputController.UseKeyOnce(4);
-        }
-        else if (m_Components.InputController.GetKeyStates[5])
-        {
-            m_Components.TargetController.PreviousTarget();
-            m_Components.InputController.UseKeyOnce(5);
-        }
-
         if (m_Components.InputController.GetKeyStates[6])
         {
-            if (!m_Components.ColorController.ContrastCheck(m_Components.ColorController.GetTargetColorContrast, m_Components.ColorController.PlayerColor, m_Components.ColorController.GetEnemyColors[m_Components.TargetController.GetTarget]))
+            if (m_AttackCoroutine == null)
             {
-                if (transform.position.y < m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y + 0.3f &&
-                    transform.position.y > m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y - 0.3f)
-                {
-                    StartCoroutine(DashAttack(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget], 0.3f));
-
-                    m_Animator.SetBool("Attack", true);
-                    
-                    //Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
-                    //m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
-                    //m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
-
-                    m_Components.GameManager.Progress.AddScore();
-                }
+                m_AttackCoroutine = StartCoroutine(DashAttack(0.3f, 9));
             }
-            else
-            {
-                if (transform.position.y < m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y + 0.3f &&
-                    transform.position.y > m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget].transform.position.y - 0.3f)
-                {
-                    StartCoroutine(DashAttack(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget], 0.3f));
 
-                    m_Animator.SetBool("Attack", true);
-
-                    //Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
-                    //m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
-                    //m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
-
-                    m_Components.GameManager.Progress.RemoveScore();
-                }
-            }
+            m_Animator.SetBool("Attack", true);
             m_Components.InputController.UseKeyOnce(6);
         }
     }
@@ -112,31 +77,48 @@ public class PlayerController : MonoBehaviour
         {
             m_Animator.SetBool("Tong", false);
         }
+
+        if (collider.gameObject.tag == "Enemy" && m_AttackCoroutine != null)
+        {
+            if (!m_Components.ColorController.ContrastCheck(m_Components.ColorController.GetTargetColorContrast, m_Components.ColorController.PlayerColor, collider.gameObject.GetComponent<SpriteRenderer>().color))
+            {
+                m_Animator.SetBool("Attack", false);
+                m_Components.ColorController.GetEnemyObjects.Remove(collider.gameObject);
+                m_Components.ColorController.GetEnemyColors.Remove(collider.gameObject.GetComponent<SpriteRenderer>().color);
+                Destroy(collider.gameObject);
+                StopCoroutine(m_AttackCoroutine);
+                m_AttackCoroutine = null;
+                m_Components.GameManager.Progress.AddScore();
+            }
+            else if (m_Components.ColorController.ContrastCheck(m_Components.ColorController.GetTargetColorContrast, m_Components.ColorController.PlayerColor, collider.gameObject.GetComponent<SpriteRenderer>().color))
+            {
+                m_Animator.SetBool("Attack", false);
+                StopCoroutine(m_AttackCoroutine);
+                m_AttackCoroutine = null;
+                m_Components.GameManager.Progress.RemoveScore();
+            }
+        }
     }
 
-    IEnumerator DashAttack(GameObject target, float time)
+    void OnCollisionEnter2D(Collision2D collider)
+    {
+        //Debug.Log(collider.gameObject.tag);
+
+    }
+
+    IEnumerator DashAttack(float time, float length)
     {
         float elapsedTime = 0;
         Vector3 startingPos = transform.position;
 
         while (elapsedTime < time)
         {
-            if (target != null)
-            {
-                transform.position = Vector3.Lerp(startingPos, target.transform.position, (elapsedTime / time));
-
-            float distance = Vector2.Distance(transform.position, target.transform.position);
-            }
+            transform.position = Vector3.Lerp(startingPos, (startingPos + new Vector3(length, 0)), (elapsedTime / time));
             elapsedTime += Time.deltaTime;
 
             if (elapsedTime >= time)
             {
-                Destroy(m_Components.ColorController.GetEnemyObjects[m_Components.TargetController.GetTarget]);
-                m_Components.ColorController.GetEnemyObjects.RemoveAt(m_Components.TargetController.GetTarget);
-                m_Components.ColorController.GetEnemyColors.RemoveAt(m_Components.TargetController.GetTarget);
-
                 m_Animator.SetBool("Attack", false);
-
                 yield break;
             }
 
